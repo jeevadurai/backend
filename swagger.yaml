@@ -1,0 +1,3464 @@
+openapi: 3.0.0
+info:
+  title: Quick Code Management API
+  version: 1.0.0
+  description: API for managing quick codes for various types.
+servers:
+  - url: http://localhost:5000/api
+tags:
+  - name: QuickCode
+    description: Operations related to quick codes
+  - name: MetaCode
+    description: Operations related to meta codes
+  - name: Scholastic
+    description: Operations related to scholastic types
+  - name: User
+    description: Operations related to user types
+  - name: Designation Type
+    description: Operations related to designation types
+  - name: Center Type
+    description: Operations related to center types
+  - name: Member Type
+    description: Operations related to member types
+  - name: Mandate Type
+    description: Operations related to mandate types
+  - name: Formation Type
+    description: Operations related to formation types
+  - name: PCICOFF Type
+    description: Operations related to PCICOFF types
+  - name: Promotion Type
+    description: Operations related to Promotion types
+  - name: Year of Formation Type
+    description: Operations related to Formation types
+  - name: Anniversary Type
+    description: Operations related to Anniversary types
+  - name: Apostolate
+    description: Operations related to Apostolate types
+  - name: Division Type
+    description: Operations related to division types
+  - name: Blood Group
+    description: Operations related to blood groups
+  - name: Language
+    description: Operations related to languages
+  - name: Province
+    description: Operations related to provinces
+  - name: Country
+    description: Operations related to countries
+  - name: State
+    description: Operations related to states
+  - name: User
+    description: Operations related to users
+  - name: Nationality
+    description: Operations related to nationalities
+  - name: Division
+    description: Operations related to divisions
+
+paths:
+  /quickcodes:
+    post:
+      summary: Create a new quick code
+      tags:
+        - QuickCode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  description: The type of quick code
+                language_code:
+                  type: string
+                  description: The language code
+                quickcode_name:
+                  type: string
+                  description: The name of the quick code
+                created_by:
+                  type: string
+                  description: The creator
+              required:
+                - quick_code_type
+                - language_code
+                - quickcode_name
+                - created_by
+      responses:
+        200:
+          description: The quick code was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuickCode'
+        400:
+          description: Invalid quickcode_name for the provided quick_code_type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid quickcode_name for the provided quick_code_type
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create quick code
+
+  /getoverallbyquickcodename:
+    get:
+      summary: Retrieve quick codes by type
+      tags:
+        - QuickCode
+      parameters:
+        - in: query
+          name: quick_code_type
+          schema:
+            type: string
+          description: The type of quick code to filter by
+      responses:
+        200:
+          description: A list of quick codes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuickCode'
+        400:
+          description: Invalid quick_code_type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be deptyp
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve quick codes
+
+  /updatequickcode:
+    put:
+      summary: Update an existing quick code
+      tags:
+        - QuickCode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code:
+                  type: string
+                  description: The quick code of the entry to update
+                quick_code_type:
+                  type: string
+                  description: The type of quick code
+                quickcode_name:
+                  type: string
+                  description: The name of the quick code
+                updated_by:
+                  type: string
+                  description: The updater
+              required:
+                - quick_code
+                - quick_code_type
+                - quickcode_name
+                - updated_by
+      responses:
+        200:
+          description: The quick code was successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuickCode'
+        400:
+          description: Invalid quick_code_type or quickcode_name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid quick_code_type or quickcode_name
+        404:
+          description: Quick code entry not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Quick code entry not found
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to update quick code
+
+  /deletequickcode:
+    delete:
+      summary: Delete an existing quick code
+      tags:
+        - QuickCode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  description: The type of quick code
+                quick_code:
+                  type: string
+                  description: The quick code of the entry to delete
+              required:
+                - quick_code_type
+                - quick_code
+      responses:
+        200:
+          description: The quick code was successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Quick code entry deleted successfully
+        404:
+          description: Quick code entry not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Quick code entry not found
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to delete quick code
+
+  /getallquickcodetype:
+    get:
+      summary: Retrieve all meta code names
+      tags:
+        - MetaCode
+      responses:
+        200:
+          description: A list of meta codes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MetaCode'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve meta codes
+
+  /schquickcode:
+    post:
+      tags:
+        - Scholastic
+      summary: Create a new scholastic quick code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  description: The type of quick code
+                language_code:
+                  type: string
+                  description: The language code
+                quickcode_name:
+                  type: string
+                  description: The name of the quick code
+                created_by:
+                  type: string
+                  description: The creator
+              required:
+                - quick_code_type
+                - language_code
+                - quickcode_name
+                - created_by
+      responses:
+        200:
+          description: The quick code was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuickCode'
+        400:
+          description: Invalid quickcode_name for the provided quick_code_type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid quickcode_name for the provided quick_code_type
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create quick code
+
+  /getschtyp:
+    get:
+      tags:
+        - Scholastic
+      summary: Retrieve all scholastic quick codes
+      responses:
+        200:
+          description: A list of quick codes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuickCode'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve quick codes
+
+  /userquickcode:
+    post:
+      tags:
+        - User
+      summary: Create a new user quick code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  description: The type of quick code
+                language_code:
+                  type: string
+                  description: The language code
+                quickcode_name:
+                  type: string
+                  description: The name of the quick code
+                created_by:
+                  type: string
+                  description: The creator
+              required:
+                - quick_code_type
+                - language_code
+                - quickcode_name
+                - created_by
+      responses:
+        200:
+          description: The quick code was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuickCode'
+        400:
+          description: Invalid quickcode_name for the provided quick_code_type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid quickcode_name for the provided quick_code_type
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create quick code
+
+  /getusertypes:
+    get:
+      tags:
+        - User
+      summary: Retrieve all user quick codes
+      responses:
+        200:
+          description: A list of user quick codes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuickCode'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve quick codes
+
+  /desquickcode:
+    post:
+      tags:
+        - Designation Type
+      summary: Create a quick code for designation type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  example: destyp
+                language_code:
+                  type: string
+                  example: en
+                quickcode_name:
+                  type: string
+                  example: Manager
+                created_by:
+                  type: string
+                  example: admin
+      responses:
+        '200':
+          description: Quick code created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid quick_code_type or duplicate quickcode_name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be destyp
+        '500':
+          description: Failed to create quick code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create quick code
+
+  /getDestinationNames:
+    get:
+      tags:
+        - Designation Type
+      summary: Get all destination names
+      parameters:
+        - in: query
+          name: quick_code_type
+          schema:
+            type: string
+            example: destyp
+      responses:
+        '200':
+          description: List of destination names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    quickcode_name:
+                      type: string
+                    quick_code:
+                      type: string
+                    quick_code_type:
+                      type: string
+        '400':
+          description: Invalid quick_code_type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be destyp
+        '404':
+          description: No data found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No data found
+        '500':
+          description: Failed to retrieve quick code names
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve quick code names
+
+  /createcenter:
+    post:
+      tags:
+        - Center Type
+      summary: Create a quick code for center type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  example: ctrtyp
+                language_code:
+                  type: string
+                  example: en
+                quickcode_name:
+                  type: string
+                  example: Training Center
+                created_by:
+                  type: string
+                  example: admin
+      responses:
+        '200':
+          description: Quick code created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid quick_code_type or duplicate quickcode_name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be ctrtyp
+        '500':
+          description: Failed to create quick code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create quick code
+
+  /getCenterNames:
+    get:
+      tags:
+        - Center Type
+      summary: Get all center names
+      parameters:
+        - in: query
+          name: quick_code_type
+          schema:
+            type: string
+            example: ctrtyp
+      responses:
+        '200':
+          description: List of center names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    quickcode_name:
+                      type: string
+                    quick_code:
+                      type: string
+                    quick_code_type:
+                      type: string
+        '400':
+          description: Invalid quick_code_type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be ctrtyp
+        '404':
+          description: No data found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No data found
+        '500':
+          description: Failed to retrieve quick code names
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve quick code names
+
+  /createMemberType:
+    post:
+      tags:
+        - Member Type
+      summary: Create a quick code for member type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  example: memtyp
+                language_code:
+                  type: string
+                  example: en
+                quickcode_name:
+                  type: string
+                  example: Regular Member
+                created_by:
+                  type: string
+                  example: admin
+      responses:
+        '200':
+          description: Quick code created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid quick_code_type or duplicate quickcode_name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be memtyp
+        '500':
+          description: Failed to create quick code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create quick code
+
+  /getMemberTypes:
+    get:
+      tags:
+        - Member Type
+      summary: Get all member type names
+      parameters:
+        - in: query
+          name: quick_code_type
+          schema:
+            type: string
+            example: memtyp
+      responses:
+        '200':
+          description: List of member type names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    quickcode_name:
+                      type: string
+                    quick_code:
+                      type: string
+                    quick_code_type:
+                      type: string
+        '400':
+          description: Invalid quick_code_type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be memtyp
+        '404':
+          description: No data found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No data found
+        '500':
+          description: Failed to retrieve quick code names
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve quick code names
+
+  /CreateMandate:
+    post:
+      tags:
+        - Mandate Type
+      summary: Create a quick code for mandate type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  example: mandat
+                language_code:
+                  type: string
+                  example: en
+                quickcode_name:
+                  type: string
+                  example: Mandate Name
+                created_by:
+                  type: string
+                  example: admin
+      responses:
+        '200':
+          description: Quick code created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid quick_code_type or duplicate quickcode_name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be mandat
+        '500':
+          description: Failed to create quick code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create quick code
+
+  /getMandate:
+    get:
+      tags:
+        - Mandate Type
+      summary: Get all mandate type names
+      parameters:
+        - in: query
+          name: quick_code_type
+          schema:
+            type: string
+            example: mandat
+      responses:
+        '200':
+          description: List of mandate type names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    quickcode_name:
+                      type: string
+                    quick_code:
+                      type: string
+                    quick_code_type:
+                      type: string
+        '400':
+          description: Invalid quick_code_type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be mandat
+        '404':
+          description: No data found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No data found
+        '500':
+          description: Failed to retrieve quick code names
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve quick code names
+
+  /createFormation:
+    post:
+      tags:
+        - Formation Type
+      summary: Create a quick code for formation type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  example: fortyp
+                language_code:
+                  type: string
+                  example: en
+                quickcode_name:
+                  type: string
+                  example: Formation Name
+                created_by:
+                  type: string
+                  example: admin
+      responses:
+        '200':
+          description: Quick code created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid quick_code_type or duplicate quickcode_name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be fortyp
+        '500':
+          description: Failed to create quick code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create quick code
+
+  /getFormationNames:
+    get:
+      tags:
+        - Formation Type
+      summary: Get all formation type names
+      parameters:
+        - in: query
+          name: quick_code_type
+          schema:
+            type: string
+            example: fortyp
+      responses:
+        '200':
+          description: List of formation type names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    quickcode_name:
+                      type: string
+                    quick_code:
+                      type: string
+                    quick_code_type:
+                      type: string
+        '400':
+          description: Invalid quick_code_type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be fortyp
+        '404':
+          description: No data found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No data found
+        '500':
+          description: Failed to retrieve quick code names
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve quick code names
+
+  /createPcicof:
+    post:
+      tags:
+        - PCICOFF Type
+      summary: Create a quick code for PCICOFF type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  example: pcicof
+                language_code:
+                  type: string
+                  example: en
+                quickcode_name:
+                  type: string
+                  example: PCICOFF Name
+                created_by:
+                  type: string
+                  example: admin
+      responses:
+        '200':
+          description: Quick code created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid quick_code_type or duplicate quickcode_name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be pcicof
+        '500':
+          description: Failed to create quick code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create quick code
+
+  /getPcicof:
+    get:
+      tags:
+        - PCICOFF Type
+      summary: Get all PCICOFF type names
+      parameters:
+        - in: query
+          name: quick_code_type
+          schema:
+            type: string
+            example: pcicof
+      responses:
+        '200':
+          description: List of PCICOFF type names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    quickcode_name:
+                      type: string
+                    quick_code:
+                      type: string
+                    quick_code_type:
+                      type: string
+        '400':
+          description: Invalid quick_code_type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be pcicof
+        '404':
+          description: No data found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No data found
+        '500':
+          description: Failed to retrieve quick code names
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve quick code names
+
+  /createPromotion:
+    post:
+      summary: Create a new promotion quick code
+      tags:
+        - Promotion Type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  description: The type of quick code
+                language_code:
+                  type: string
+                  description: The language code
+                quickcode_name:
+                  type: string
+                  description: The name of the quick code
+                created_by:
+                  type: string
+                  description: The creator
+              required:
+                - quick_code_type
+                - language_code
+                - quickcode_name
+                - created_by
+      responses:
+        200:
+          description: The quick code was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuickCode'
+        400:
+          description: Invalid quick_code_type or duplicate quickcode_name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be promto
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create quick code
+
+  /getPromotion:
+    get:
+      summary: Retrieve all promotion quick codes
+      tags:
+        - Promotion Type
+      responses:
+        200:
+          description: A list of promotion quick codes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuickCode'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve quick codes
+
+  /createYrform:
+    post:
+      tags:
+        - Year of Formation Type
+      summary: Create a new year of formation quick code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  description: The type of quick code
+                language_code:
+                  type: string
+                  description: The language code
+                quickcode_name:
+                  type: string
+                  description: The name of the quick code
+                created_by:
+                  type: string
+                  description: The creator
+              required:
+                - quick_code_type
+                - language_code
+                - quickcode_name
+                - created_by
+      responses:
+        200:
+          description: The quick code was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuickCode'
+        400:
+          description: Invalid quick_code_type or duplicate quickcode_name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be yrform
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create quick code
+
+  /getYrformTypeNames:
+    get:
+      tags:
+        - Year of Formation Type
+      summary: Retrieve all year of formation quick codes
+      responses:
+        200:
+          description: A list of year of formation quick codes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuickCode'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve quick codes
+
+  /createanniversary:
+    post:
+      tags:
+        - Anniversary Type
+      summary: Create a new anniversary quick code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  description: The type of quick code
+                language_code:
+                  type: string
+                  description: The language code
+                quickcode_name:
+                  type: string
+                  description: The name of the quick code
+                created_by:
+                  type: string
+                  description: The creator
+              required:
+                - quick_code_type
+                - language_code
+                - quickcode_name
+                - created_by
+      responses:
+        200:
+          description: The quick code was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuickCode'
+        400:
+          description: Invalid quick_code_type or duplicate quickcode_name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be anityp
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create quick code
+
+  /getAnitypTypeNames:
+    get:
+      tags:
+        - Anniversary Type
+      summary: Retrieve all anniversary quick codes
+      responses:
+        200:
+          description: A list of anniversary quick codes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuickCode'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve quick codes
+
+  /createQuickCodeApostl:
+    post:
+      summary: Create a new apostolate quick code
+      tags:
+        - Apostolate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  description: The type of quick code
+                language_code:
+                  type: string
+                  description: The language code
+                quickcode_name:
+                  type: string
+                  description: The name of the quick code
+                created_by:
+                  type: string
+                  description: The creator
+              required:
+                - quick_code_type
+                - language_code
+                - quickcode_name
+                - created_by
+      responses:
+        200:
+          description: The quick code was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuickCode'
+        400:
+          description: Invalid quick_code_type or duplicate quickcode_name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be apostl
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create quick code
+
+  /getApostlTypeNames:
+    get:
+      summary: Retrieve all apostolate quick codes
+      tags:
+        - Apostolate
+      responses:
+        200:
+          description: A list of apostolate quick codes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuickCode'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve quick codes
+
+  /saveapostolate:
+    post:
+      summary: Save a new apostolate
+      tags:
+        - Apostolate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                apostolate_code:
+                  type: string
+                centre_type_code:
+                  type: string
+                language_code:
+                  type: string
+                concurrency_val:
+                  type: integer
+                created_by:
+                  type: string
+                created_date:
+                  type: string
+                  format: date-time
+                updated_by:
+                  type: string
+                updated_date:
+                  type: string
+                  format: date-time
+              required:
+                - apostolate_code
+                - centre_type_code
+                - language_code
+                - concurrency_val
+                - created_by
+                - created_date
+      responses:
+        201:
+          description: The apostolate was successfully saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Apostolate'
+        400:
+          description: Invalid input or apostolate/centre type not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Apostolate code or centre type not found
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to save apostolate
+
+  /getApostolateandcenternames:
+    get:
+      summary: Retrieve all apostolates with their center names
+      tags:
+        - Apostolate
+      responses:
+        200:
+          description: A list of apostolates with center names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApostolateWithCenterNames'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve apostolates
+
+  /deletethedata:
+    delete:
+      summary: Delete an apostolate
+      tags:
+        - Apostolate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                apostolate_code:
+                  type: string
+                centre_type_code:
+                  type: string
+      responses:
+        200:
+          description: The apostolate was successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Apostolate deleted successfully
+        400:
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Please provide either apostolate_code or centre_type_code or both
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to delete apostolate
+
+  /getApostolateNames:
+    get:
+      summary: Retrieve all apostolate names
+      tags:
+        - Apostolate
+      responses:
+        200:
+          description: A list of apostolate names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    quick_code:
+                      type: string
+                    quickcode_name:
+                      type: string
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve apostolate names
+
+  /getCentreTypeNames:
+    get:
+      summary: Retrieve all centre type names
+      tags:
+        - Apostolate
+      responses:
+        200:
+          description: A list of centre type names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    quick_code:
+                      type: string
+                    quickcode_name:
+                      type: string
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve centre type names
+
+  /updateCentreTypeForApostolate:
+    put:
+      summary: Update the centre type for an apostolate
+      tags:
+        - Apostolate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                apostolate_code:
+                  type: string
+                new_centre_type_code:
+                  type: string
+              required:
+                - apostolate_code
+                - new_centre_type_code
+      responses:
+        200:
+          description: The centre type was successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Centre type updated successfully
+        400:
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid apostolate_code or centre_type_code
+        409:
+          description: Combination of apostolate_code and centre_type_code already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Apostolate code and centre type code combination already exists
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to update centre type
+
+  /createdivisiontyp:
+    post:
+      summary: Create a new division type quick code
+      tags:
+        - Division Type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quick_code_type:
+                  type: string
+                  description: The type of quick code
+                language_code:
+                  type: string
+                  description: The language code
+                quickcode_name:
+                  type: string
+                  description: The name of the quick code
+                created_by:
+                  type: string
+                  description: The creator
+              required:
+                - quick_code_type
+                - language_code
+                - quickcode_name
+                - created_by
+      responses:
+        200:
+          description: The quick code was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuickCode'
+        400:
+          description: Invalid quick_code_type or duplicate quickcode_name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be divtyp
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create quick code
+
+  /getdivisionnames:
+    get:
+      summary: Retrieve all division type quick codes
+      tags:
+        - Division Type
+      responses:
+        200:
+          description: A list of division type quick codes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuickCode'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve quick codes
+
+  /getbloodGroupname:
+    get:
+      summary: Retrieve all blood group names
+      tags:
+        - Blood Group
+      responses:
+        200:
+          description: A list of blood group names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BloodGroup'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve blood group names
+
+  /createLanguage:
+    post:
+      summary: Create a new language quick code
+      tags:
+        - Language
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                language_name:
+                  type: string
+                  description: The name of the language
+                created_by:
+                  type: string
+                  description: The creator
+                quick_code_type:
+                  type: string
+                  description: The type of quick code
+              required:
+                - language_name
+                - created_by
+                - quick_code_type
+      responses:
+        200:
+          description: The language quick code was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuickCode'
+        400:
+          description: Invalid quick_code_type or language not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: quick_code_type must be lancod
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to create language quick code
+
+  /getLanguagedetails:
+    get:
+      summary: Retrieve all language details
+      tags:
+        - Language
+      responses:
+        200:
+          description: A list of language details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LanguageDetail'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve language details
+
+  /getlanguagemetadata:
+    get:
+      summary: Retrieve language metadata
+      tags:
+        - Language
+      responses:
+        200:
+          description: A list of language metadata
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LanguageMetadata'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve language metadata
+
+  /getlanguages:
+    get:
+      summary: Retrieve all language names
+      tags:
+        - Language
+      responses:
+        200:
+          description: A list of language names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuickCode'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve language names
+
+  /SaveProvince:
+    post:
+      summary: Save a new province
+      tags:
+        - Province
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                countryName:
+                  type: string
+                provinceName:
+                  type: string
+                shortName:
+                  type: string
+                academicYear:
+                  type: string
+                createdBy:
+                  type: string
+                  default: admin
+              required:
+                - countryName
+                - provinceName
+                - shortName
+                - academicYear
+      responses:
+        201:
+          description: The province was successfully saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Province'
+        400:
+          description: Invalid input or country not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid country name
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to save province
+
+  /GetProvinces:
+    get:
+      summary: Retrieve all provinces
+      tags:
+        - Province
+      responses:
+        200:
+          description: A list of provinces
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProvinceWithCountry'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to retrieve provinces
+
+  /DeleteProvince/{province_code}/{country_code}:
+    delete:
+      summary: Delete a province
+      tags:
+        - Province
+      parameters:
+        - in: path
+          name: province_code
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: country_code
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: The province was successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Province deleted successfully
+        400:
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Province code and country code are required
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to delete province
+
+  /updateProvince/{province_code}:
+    put:
+      summary: Update a province
+      tags:
+        - Province
+      parameters:
+        - in: path
+          name: province_code
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                province_name:
+                  type: string
+                short_name:
+                  type: string
+                country_name:
+                  type: string
+                academic_year:
+                  type: string
+                updated_by:
+                  type: string
+                  default: admin
+              required:
+                - province_name
+                - short_name
+                - country_name
+                - academic_year
+      responses:
+        200:
+          description: The province was successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Province'
+        400:
+          description: Invalid input or country not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid country name
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to update province
+  /saveCountryData:
+    post:
+      summary: Save country data
+      tags:
+        - Country
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                country_name:
+                  type: string
+                alpha_3code:
+                  type: string
+                ISD_code:
+                  type: string
+                language_code:
+                  type: string
+                concurrency_val:
+                  type: integer
+                created_by:
+                  type: string
+              required:
+                - country_name
+                - alpha_3code
+                - ISD_code
+                - language_code
+                - concurrency_val
+                - created_by
+      responses:
+        200:
+          description: Country data saved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        400:
+          description: Error in saving country data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /getCountryData:
+    get:
+      summary: Get country data
+      tags:
+        - Country
+      responses:
+        200:
+          description: List of country data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    country_name:
+                      type: string
+                    alpha_3code:
+                      type: string
+                    ISD_code:
+                      type: string
+                    language_code:
+                      type: string
+                    concurrency_val:
+                      type: integer
+                    created_by:
+                      type: string
+                    created_date:
+                      type: string
+                    updated_by:
+                      type: string
+                    updated_date:
+                      type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /getCountryDetails:
+    get:
+      summary: Get country details
+      tags:
+        - Country
+      parameters:
+        - in: query
+          name: alpha_3code
+          schema:
+            type: string
+          required: true
+          description: Alpha 3 code of the country
+      responses:
+        200:
+          description: Country details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  country_name:
+                    type: string
+                  alpha_3code:
+                    type: string
+                  ISD_code:
+                    type: string
+                  language_code:
+                    type: string
+        404:
+          description: Country not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /listCountries:
+    get:
+      summary: List countries
+      tags:
+        - Country
+      responses:
+        200:
+          description: List of countries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    country_name:
+                      type: string
+                    alpha_3code:
+                      type: string
+        404:
+          description: No countries found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /deleteCountry:
+    delete:
+      summary: Delete country
+      tags:
+        - Country
+      parameters:
+        - in: query
+          name: country_code
+          schema:
+            type: string
+          required: true
+          description: Code of the country to delete
+      responses:
+        200:
+          description: Country deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        404:
+          description: Country not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /savestatedata:
+    post:
+      summary: Save state data
+      tags:
+        - State
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                state_code:
+                  type: string
+                country_code:
+                  type: string
+                state_name:
+                  type: string
+                ISD_code:
+                  type: string
+                language_code:
+                  type: string
+                concurrency_val:
+                  type: integer
+                created_by:
+                  type: string
+              required:
+                - state_code
+                - country_code
+                - state_name
+                - ISD_code
+                - language_code
+                - concurrency_val
+                - created_by
+      responses:
+        200:
+          description: State data saved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        400:
+          description: Error in saving state data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /getStateData:
+    get:
+      summary: Get state data
+      tags:
+        - State
+      parameters:
+        - in: query
+          name: state_code
+          schema:
+            type: string
+          description: State code
+        - in: query
+          name: country_code
+          schema:
+            type: string
+          description: Country code
+      responses:
+        200:
+          description: State data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    state_code:
+                      type: string
+                    country_code:
+                      type: string
+                    state_name:
+                      type: string
+                    ISD_code:
+                      type: string
+                    language_code:
+                      type: string
+                    concurrency_val:
+                      type: integer
+                    created_by:
+                      type: string
+                    created_date:
+                      type: string
+                    updated_by:
+                      type: string
+                    updated_date:
+                      type: string
+        404:
+          description: State not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /deletestatedata:
+    delete:
+      summary: Delete state data
+      tags:
+        - State
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                state_code:
+                  type: string
+                country_code:
+                  type: string
+              required:
+                - state_code
+                - country_code
+      responses:
+        200:
+          description: State data deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        404:
+          description: State not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /createUser:
+    post:
+      summary: Create user
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                province_code:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                username:
+                  type: string
+                password:
+                  type: string
+                user_type_name:
+                  type: string
+                language_code:
+                  type: string
+              required:
+                - province_code
+                - first_name
+                - last_name
+                - username
+                - password
+                - user_type_name
+                - language_code
+      responses:
+        201:
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  province_code:
+                    type: string
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  username:
+                    type: string
+                  password:
+                    type: string
+                  user_type_name:
+                    type: string
+                  language_code:
+                    type: string
+        400:
+          description: Error in creating user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /getusers:
+    get:
+      summary: Get users
+      tags:
+        - User
+      responses:
+        200:
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    province_code:
+                      type: string
+                    user_id:
+                      type: string
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    username:
+                      type: string
+                    password:
+                      type: string
+                    user_type_name:
+                      type: string
+                    language_code:
+                      type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /updateuser/{province_code}/{user_id}:
+    put:
+      summary: Update user
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: province_code
+          schema:
+            type: string
+          required: true
+          description: Province code
+        - in: path
+          name: user_id
+          schema:
+            type: string
+          required: true
+          description: User ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                username:
+                  type: string
+                password:
+                  type: string
+                user_type_name:
+                  type: string
+                language_code:
+                  type: string
+                new_province_code:
+                  type: string
+      responses:
+        200:
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  province_code:
+                    type: string
+                  user_id:
+                    type: string
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  username:
+                    type: string
+                  password:
+                    type: string
+                  user_type_name:
+                    type: string
+                  language_code:
+                    type: string
+        400:
+          description: Error in updating user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /deleteUser/{province_code}/{user_id}:
+    delete:
+      summary: Delete user
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: province_code
+          schema:
+            type: string
+          required: true
+          description: Province code
+        - in: path
+          name: user_id
+          schema:
+            type: string
+          required: true
+          description: User ID
+      responses:
+        200:
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /createNationality:
+    post:
+      summary: Create nationality metadata
+      tags:
+        - Nationality
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nationality:
+                  type: string
+                code:
+                  type: string
+                created_by:
+                  type: string
+                quick_code_type:
+                  type: string
+              required:
+                - nationality
+                - code
+                - created_by
+                - quick_code_type
+      responses:
+        200:
+          description: Nationality metadata created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  quick_code_type:
+                    type: string
+                  quick_code:
+                    type: string
+                  quickcode_name:
+                    type: string
+                  concurrency_val:
+                    type: integer
+                  language_code:
+                    type: string
+                  created_by:
+                    type: string
+                  created_date:
+                    type: string
+                    format: date-time
+        400:
+          description: Error in creating nationality metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /getNationalityDetails:
+    get:
+      summary: Get nationality details
+      tags:
+        - Nationality
+      responses:
+        200:
+          description: List of nationality details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    nationality:
+                      type: string
+                    code:
+                      type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /getNationalityMetadata:
+    get:
+      summary: Get nationality metadata
+      tags:
+        - Nationality
+      parameters:
+        - in: query
+          name: quick_code_type
+          schema:
+            type: string
+      responses:
+        200:
+          description: List of nationality metadata
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    nationality:
+                      type: string
+                    code:
+                      type: string
+                    quick_code_type:
+                      type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /getNationalities:
+    get:
+      summary: Get nationality names
+      tags:
+        - Nationality
+      parameters:
+        - in: query
+          name: quick_code_type
+          schema:
+            type: string
+      responses:
+        200:
+          description: List of nationality names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    quickcode_name:
+                      type: string
+                    quick_code:
+                      type: string
+                    quick_code_type:
+                      type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /SaveDivision:
+    post:
+      summary: Save division setup
+      tags:
+        - Division
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                province_code:
+                  type: string
+                division_type_code:
+                  type: string
+                division_name:
+                  type: string
+                language_code:
+                  type: string
+                concurrency_val:
+                  type: integer
+                created_by:
+                  type: string
+                updated_by:
+                  type: string
+                updated_date:
+                  type: string
+                  format: date-time
+              required:
+                - province_code
+                - division_type_code
+                - division_name
+                - language_code
+                - concurrency_val
+                - created_by
+                - updated_by
+                - updated_date
+      responses:
+        201:
+          description: Division setup saved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /GetDivisions:
+    get:
+      summary: Get divisions
+      tags:
+        - Division
+      responses:
+        200:
+          description: List of divisions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        province_code:
+                          type: string
+                        division_type_code:
+                          type: string
+                        division_code:
+                          type: string
+                        division_name:
+                          type: string
+                        language_code:
+                          type: string
+                        concurrency_val:
+                          type: integer
+                        created_by:
+                          type: string
+                        created_date:
+                          type: string
+                        updated_by:
+                          type: string
+                        updated_date:
+                          type: string
+                        province_name:
+                          type: string
+                        division_type_name:
+                          type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /UpdateDivision/{province_code}/{division_type_code}/{division_code}:
+    put:
+      summary: Update division setup
+      tags:
+        - Division
+      parameters:
+        - in: path
+          name: province_code
+          schema:
+            type: string
+          required: true
+          description: Province code
+        - in: path
+          name: division_type_code
+          schema:
+            type: string
+          required: true
+          description: Division type code
+        - in: path
+          name: division_code
+          schema:
+            type: string
+          required: true
+          description: Division code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                division_name:
+                  type: string
+                language_code:
+                  type: string
+                concurrency_val:
+                  type: integer
+                updated_by:
+                  type: string
+                updated_date:
+                  type: string
+                  format: date-time
+              required:
+                - division_name
+                - language_code
+                - concurrency_val
+                - updated_by
+                - updated_date
+      responses:
+        200:
+          description: Division setup updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+        404:
+          description: Division not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /DeleteDivision/{province_code}/{division_type_code}/{division_code}:
+    delete:
+      summary: Delete division setup
+      tags:
+        - Division
+      parameters:
+        - in: path
+          name: province_code
+          schema:
+            type: string
+          required: true
+          description: Province code
+        - in: path
+          name: division_type_code
+          schema:
+            type: string
+          required: true
+          description: Division type code
+        - in: path
+          name: division_code
+          schema:
+            type: string
+          required: true
+          description: Division code
+      responses:
+        200:
+          description: Division setup deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+        404:
+          description: Division not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  
+components:
+  schemas:
+    QuickCode:
+      type: object
+      properties:
+        quick_code:
+          type: string
+        quick_code_type:
+          type: string
+        quickcode_name:
+          type: string
+        language_code:
+          type: string
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_by:
+          type: string
+        updated_at:
+          type: string
+          format: date-time
+    MetaCode:
+      type: object
+      properties:
+        meta_code:
+          type: string
+        meta_code_name:
+          type: string
+    Apostolate:
+      type: object
+      properties:
+        apostolate_code:
+          type: string
+        centre_type_code:
+          type: string
+        apostolate_name:
+          type: string
+        centre_type_name:
+          type: string
+        date_format:
+          type: string
+        academic_year:
+          type: string
+        language_code:
+          type: string
+        concurrency_val:
+          type: integer
+        created_by:
+          type: string
+        created_date:
+          type: string
+          format: date-time
+        updated_by:
+          type: string
+        updated_date:
+          type: string
+          format: date-time
+    ApostolateWithCenterNames:
+      type: object
+      properties:
+        apostolate_code:
+          type: string
+        apostolate_name:
+          type: string
+        centre_type_code:
+          type: string
+        centre_type_name:
+          type: string
+        date_format:
+          type: string
+        academic_year:
+          type: string
+        language_code:
+          type: string
+        concurrency_val:
+          type: integer
+        created_by:
+          type: string
+        created_date:
+          type: string
+          format: date-time
+        updated_by:
+          type: string
+        updated_date:
+          type: string
+          format: date-time
+    BloodGroup:
+      type: object
+      properties:
+        BloodGroup:
+          type: string
+    LanguageDetail:
+      type: object
+      properties:
+        language_name:
+          type: string
+        language_code:
+          type: string
+    LanguageMetadata:
+      type: object
+      properties:
+        language_name:
+          type: string
+        language_code:
+          type: string
+        quick_code_type:
+          type: string
+    Province:
+      type: object
+      properties:
+        province_code:
+          type: string
+        country_code:
+          type: string
+        province_name:
+          type: string
+        short_name:
+          type: string
+        academic_year:
+          type: string
+        language_code:
+          type: string
+        concurrency_val:
+          type: integer
+        created_by:
+          type: string
+        created_date:
+          type: string
+          format: date-time
+        updated_by:
+          type: string
+        updated_date:
+          type: string
+          format: date-time
+    ProvinceWithCountry:
+      type: object
+      properties:
+        province_code:
+          type: string
+        country_code:
+          type: string
+        province_name:
+          type: string
+        short_name:
+          type: string
+        academic_year:
+          type: string
+        language_code:
+          type: string
+        concurrency_val:
+          type: integer
+        created_by:
+          type: string
+        created_date:
+          type: string
+          format: date-time
+        updated_by:
+          type: string
+        updated_date:
+          type: string
+          format: date-time
+        country_name:
+          type: string
+Country:
+      type: object
+      properties:
+        country_name:
+          type: string
+        alpha_3code:
+          type: string
+        ISD_code:
+          type: string
+        language_code:
+          type: string
+        concurrency_val:
+          type: integer
+        created_by:
+          type: string
+        created_date:
+          type: string
+        updated_by:
+          type: string
+        updated_date:
+          type: string
+
+State:
+      type: object
+      properties:
+        state_code:
+          type: string
+        country_code:
+          type: string
+        state_name:
+          type: string
+        ISD_code:
+          type: string
+        language_code:
+          type: string
+        concurrency_val:
+          type: integer
+        created_by:
+          type: string
+        created_date:
+          type: string
+        updated_by:
+          type: string
+        updated_date:
+          type: string
+
+User:
+      type: object
+      properties:
+        province_code:
+          type: string
+        user_id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        user_type_name:
+          type: string
+        language_code:
+          type: string
+
+Nationality:
+      type: object
+      properties:
+        nationality:
+          type: string
+        code:
+          type: string
+Division:
+      type: object
+      properties:
+        province_code:
+          type: string
+        division_type_code:
+          type: string
+        division_code:
+          type: string
+        division_name:
+          type: string
+        language_code:
+          type: string
+        concurrency_val:
+          type: integer
+        created_by:
+          type: string
+        created_date:
+          type: string
+        updated_by:
+          type: string
+        updated_date:
+          type: string
+        province_name:
+          type: string
+        division_type_name:
+          type: string
