@@ -2,143 +2,144 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export const saveApostolate = async (req, res) => {
-  const {
-      apostolate_code,
-      centre_type_code,
-      language_code,
-      concurrency_val,
-      created_by,
-      created_date,
-      updated_by,
-      updated_date
-  } = req.body;
+    const {
+        apostolate_code,
+        centre_type_code,
+        language_code,
+        concurrency_val,
+        created_by,
+        created_date,
+        updated_by,
+        updated_date
+    } = req.body;
 
-  try {
-      console.log('Received data:', req.body);
+    try {
+        console.log('Received data:', req.body);
 
-      // Fetch apostolate_name from quickcode_mst where quick_code_type is 'apostl' and quick_code matches apostolate_code
-      const apostolate = await prisma.quickcode_mst.findUnique({
-          where: {
-              quick_code_type_quick_code: {
-                  quick_code_type: 'apostl',
-                  quick_code: apostolate_code
-              }
-          }
-      });
+        // Fetch apostolate_name from quickcode_mst where quick_code_type is 'apostl' and quick_code matches apostolate_code
+        const apostolate = await prisma.quickcode_mst.findUnique({
+            where: {
+                quick_code_type_quick_code: {
+                    quick_code_type: 'apostl',
+                    quick_code: apostolate_code
+                }
+            }
+        });
 
-      console.log('Apostolate lookup result:', apostolate);
+        console.log('Apostolate lookup result:', apostolate);
 
-      if (!apostolate) {
-          console.error(`Apostolate code ${apostolate_code} not found`);
-          return res.status(404).json({ error: `Apostolate code ${apostolate_code} not found` });
-      }
+        if (!apostolate) {
+            console.error(`Apostolate code ${apostolate_code} not found`);
+            return res.status(404).json({ error: `Apostolate code ${apostolate_code} not found` });
+        }
 
-      // Fetch centre_type_name from quickcode_mst where quick_code_type is 'ctrtyp' and quick_code matches centre_type_code
-      const centreType = await prisma.quickcode_mst.findUnique({
-          where: {
-              quick_code_type_quick_code: {
-                  quick_code_type: 'ctrtyp',
-                  quick_code: centre_type_code
-              }
-          }
-      });
+        // Fetch centre_type_name from quickcode_mst where quick_code_type is 'ctrtyp' and quick_code matches centre_type_code
+        const centreType = await prisma.quickcode_mst.findUnique({
+            where: {
+                quick_code_type_quick_code: {
+                    quick_code_type: 'ctrtyp',
+                    quick_code: centre_type_code
+                }
+            }
+        });
 
-      console.log('Centre type lookup result:', centreType);
+        console.log('Centre type lookup result:', centreType);
 
-      if (!centreType) {
-          console.error(`Centre type code ${centre_type_code} not found`);
-          return res.status(404).json({ error: `Centre type code ${centre_type_code} not found` });
-      }
+        if (!centreType) {
+            console.error(`Centre type code ${centre_type_code} not found`);
+            return res.status(404).json({ error: `Centre type code ${centre_type_code} not found` });
+        }
 
-      // Save to apostolates_mst
-      const result = await prisma.apostolates_mst.create({
-          data: {
-              apostolate_code,
-              centre_type_code,
-              apostolate_name: apostolate.quickcode_name,
-              centre_type_name: centreType.quickcode_name.substring(0, 5), // Truncate to fit the column length
-              language_code,
-              concurrency_val,
-              created_by,
-              created_date: created_date ? new Date(created_date) : new Date(),
-              updated_by,
-              updated_date: updated_date ? new Date(updated_date) : new Date()
-          }
-      });
+        // Save to apostolates_mst
+        const result = await prisma.apostolates_mst.create({
+            data: {
+                apostolate_code,
+                centre_type_code,
+                apostolate_name: apostolate.quickcode_name,
+                centre_type_name: centreType.quickcode_name.substring(0, 5), // Truncate to fit the column length
+                language_code,
+                concurrency_val,
+                created_by,
+                created_date: new Date(created_date),
+                updated_by,
+                updated_date: new Date(updated_date)
+            }
+        });
 
-      console.log('Data saved successfully:', result);
-      return res.status(201).json({ message: 'Data saved successfully', data: result });
-  } catch (error) {
-      console.error('Error saving data:', error.message);
-      return res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-
+        console.log('Data saved successfully:', result);
+        return res.status(201).json({ message: 'Data saved successfully', data: result });
+    } catch (error) {
+        console.error('Error saving data:', error.message);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 export const updateCentreTypeForApostolate = async (req, res) => {
-  const { apostolate_code, new_centre_type_code } = req.body;
+  const { apostolate_code, new_centre_type_code, updated_center_type } = req.body;
 
   try {
-      // Fetch the new centre type name
-      const centreType = await prisma.quickcode_mst.findUnique({
-          where: {
-              quick_code_type_quick_code: {
-                  quick_code_type: 'ctrtyp',
-                  quick_code: new_centre_type_code
-              }
-          }
-      });
+    // Fetch the new centre type name
+    const centreType = await prisma.quickcode_mst.findUnique({
+      where: {
+        quick_code_type_quick_code: {
+          quick_code_type: 'ctrtyp',
+          quick_code: new_centre_type_code,
+        },
+      },
+    });
 
-      if (!centreType) {
-          console.error(`Centre type code ${new_centre_type_code} not found`);
-          return res.status(404).json({ error: `Centre type code ${new_centre_type_code} not found` });
-      }
+    if (!centreType) {
+      console.error(`Centre type code ${new_centre_type_code} not found`);
+      return res.status(404).json({ error: `Centre type code ${new_centre_type_code} not found` });
+    }
 
-      // Define the maximum length for the centre_type_name column
-      const maxLength = 50; // Adjust this value to match your schema
-      const truncatedCentreTypeName = centreType.quickcode_name.substring(0, maxLength); // Truncate to fit the column length
+    // Define the maximum length for the centre_type_name column
+    const maxLength = 100; // Adjust this value to match your schema
+    const truncatedCentreTypeName = centreType.quickcode_name.substring(0, maxLength); // Truncate to fit the column length
 
-      console.log('Updating apostolate_code:', apostolate_code);
-      console.log('New centre_type_code:', new_centre_type_code);
-      console.log('Truncated centre_type_name:', truncatedCentreTypeName);
+    console.log('Updating apostolate_code:', apostolate_code);
+    console.log('New centre_type_code:', new_centre_type_code);
+    console.log('Updated center type:', updated_center_type);
+    console.log('Truncated centre_type_name:', truncatedCentreTypeName);
 
-      // Check if the combination of apostolate_code and new_centre_type_code already exists
-      const existingEntry = await prisma.apostolates_mst.findUnique({
-          where: {
-              apostolate_code_centre_type_code: {
-                  apostolate_code: apostolate_code,
-                  centre_type_code: new_centre_type_code
-              }
-          }
-      });
+    // Check if the new combination of apostolate_code and centre_type_code already exists
+    const existingRecordWithNewType = await prisma.apostolates_mst.findFirst({
+      where: {
+        apostolate_code: apostolate_code,
+        centre_type_code: new_centre_type_code,
+      },
+    });
 
-      if (existingEntry) {
-          console.error(`Apostolate code ${apostolate_code} and centre type code ${new_centre_type_code} combination already exists`);
-          return res.status(409).json({ error: `Apostolate code ${apostolate_code} and centre type code ${new_centre_type_code} combination already exists` });
-      }
+    if (existingRecordWithNewType) {
+      console.error(`A record with apostolate_code ${apostolate_code} and new_centre_type_code ${new_centre_type_code} already exists`);
+      return res.status(409).json({ error: `A record with apostolate_code ${apostolate_code} and new_centre_type_code ${new_centre_type_code} already exists` });
+    }
 
-      // Update the centre type for the given apostolate code
-      const result = await prisma.apostolates_mst.updateMany({
-          where: {
-              apostolate_code: apostolate_code
-          },
-          data: {
-              centre_type_code: new_centre_type_code,
-              centre_type_name: truncatedCentreTypeName // Use truncated centre type name
-          }
-      });
+    // Update all records with the given apostolate_code
+    const result = await prisma.apostolates_mst.updateMany({
+      where: {
+        apostolate_code: apostolate_code,
+        centre_type_code: updated_center_type, // Find records with the old centre_type_code
+      },
+      data: {
+        centre_type_code: new_centre_type_code, // Update to the new centre_type_code
+        centre_type_name: truncatedCentreTypeName,
+      },
+    });
 
-      if (result.count === 0) {
-          console.error(`Apostolate code ${apostolate_code} not found`);
-          return res.status(404).json({ error: `Apostolate code ${apostolate_code} not found` });
-      }
+    if (result.count === 0) {
+      console.error(`No records updated for apostolate_code ${apostolate_code} with updated_center_type ${updated_center_type}`);
+      return res.status(404).json({ error: `No records updated for apostolate_code ${apostolate_code} with updated_center_type ${updated_center_type}` });
+    }
 
-      console.log('Centre type updated successfully:', result);
-      return res.status(200).json({ message: 'Centre type updated successfully', data: result });
+    console.log('Centre type updated successfully:', result);
+    return res.status(200).json({ message: 'Centre type updated successfully', data: result });
   } catch (error) {
-      console.error('Error updating centre type:', error.message);
-      return res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error updating centre type:', error.message);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+
 
 
 
